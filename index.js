@@ -1,22 +1,23 @@
 //Express Framework
-
 const express = require("express");
 const app = express();
+const mongoose = require("mongoose");
+
 
 const PORT = 3300;
+const DB_STRING = "mongodb://localhost:27017/book-library";
 
-//Controllers book
+//Book Rotas
+const bookRoutes = require("./routes/bookroutes");
 
-const bookControllers = require("./controllers/bookcontroller")
-//Rota (endpoint) que devolve a lista de livros
+app.use(bookRoutes);
 
-app.get('/books', bookControllers.listBooks
-);
+mongoose.connect(DB_STRING).then(result => {
+    console.log("Conectado ao banco de dados: " + DB_STRING);
 
-//Post salva o livro
-app.post('/book', bookControllers.saveBook);
-
-
+    //Iniciar o servidor
 app.listen(PORT, ()=>{
     console.log("Server online..." + PORT);
 })
+}).catch(err => console.log(err));
+
