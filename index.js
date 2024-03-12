@@ -1,26 +1,28 @@
-//Express Framework
-const express = require("express");
+const express = require("express")
 const app = express();
 const mongoose = require("mongoose");
-
+const cors = require("cors")
 
 const PORT = 3300;
-const DB_STRING = "mongodb://localhost:27017/book-library";
+const DB_STRING = "mongodb://localhost:27017/library";
 
-//Book Rotas
-const bookRoutes = require("./routes/bookroutes");
-
-//Receber o JSON no server 
+//routes
+const bookRoutes = require("./routes/bookroutes")
+const validateErros = require("./service/errorcheck");
+//Para receber o JSON corretamente
 app.use(express.json());
+app.use(cors())
 
-app.use(bookRoutes);
+app.use('/library', bookRoutes)
+
+//tratamento de erros
+app.use(validateErros);
 
 mongoose.connect(DB_STRING).then(result => {
-    console.log("Conectado ao banco de dados: " + DB_STRING);
-
-    //Iniciar o servidor
-app.listen(PORT, ()=>{
-    console.log("Server online..." + PORT);
+    app.listen(PORT, ()=> {
+        console.log("Servidor Online na porta: " + PORT)
+    })
+}).catch(err => {
+    console.log(err);
 })
-}).catch(err => console.log(err));
 

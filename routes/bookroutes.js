@@ -1,14 +1,14 @@
-//importar o express
-//importar o router
-const  express = require("express");
+
+const express = require("express")
 const router = express.Router();
-//Importar o controller
-const bookController = require("../controllers/bookcontroller")
 
-//Rotas que eu necessite na aplicação
+//Controller
+const bookController = require("../controller/bookcontroller");
+const { titleValidator, isbnValidator } = require("../service/validators");
 
-router.get('/books',bookController.listBooks);
-router.post('/book', bookController.saveBook);
+router.get('/books', bookController.listBooks);
 
+router.post ('/book',[titleValidator, isbnValidator], bookController.addNewBook);
 
 module.exports = router;
+

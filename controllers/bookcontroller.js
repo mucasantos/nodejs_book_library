@@ -1,30 +1,30 @@
-//Acessar o nosso banco de dados
-const Book = require("../model/book");
+const Book = require("../model/book")
+const { validationResult } = require("express-validator");
 
-exports.listBooks = (req, res, next) => {
+exports.addNewBook = (req, res, next) => {
 
-Book.find().then(result => {
+    const errors = validationResult(req);
 
-    res.json({
-        message: "Livros disponíveis no DB...",
-        books: result
-    })
-})
-}
+    if (!errors.isEmpty()) {
+        const error = new Error("Erro ao salvar livro!!")
+        error.statusCode = 422 || 500;
+        error.data = errors.array()
+        throw error;
+    }
 
-exports.saveBook = (req, res, next) => {
-
-    const book = new Book(req.body)
+    const book = new Book(req.body);
 
     book.save().then(result => {
+        res.status(200).json({ message: "Livro adicionado com sucesso.", result: result });
+    }).catch(err => {
+        res.status(500).json({ message: "Erro ao adicionar livro no DB!", error: err });
+    });
+};
 
-        res.json({
-            message: "Livro salvo com sucesso no DB!",
-            book_id: result._id,
-        })
-    }).catch(error => {
-        console.log(error);
+exports.listBooks = (req, res, next) => {
+    Book.find().then(result => {
+        res.status(200).json({ message: "Listagem de livros.", result: result });
+    }).catch(err => {
+        res.status(500).json({ message: "Erro ao listar livros...", error: err });
     })
-
-
-}
+};
