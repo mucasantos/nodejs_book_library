@@ -2,35 +2,29 @@
 const Book = require("../model/book");
 
 exports.listBooks = (req, res, next) => {
+
+Book.find().then(result => {
+
     res.json({
         message: "Livros disponíveis no DB...",
-        books: [
-        ]
+        books: result
     })
+})
 }
 
 exports.saveBook = (req, res, next) => {
 
-    const book = new Book(
-        {
-            "title": "NodeJS por Samuel Santos",
-            "numberPages": 255,
-            "isbn": "123456789kuk9",
-            "author": "Leonardo Santos",
-            "category": "Technology",
-            "price": 95.89,
-            "publisher": "Abril SA",
-            "quantity": 5
-        }
-    )
+    const book = new Book(req.body)
 
     book.save().then(result => {
-        console.log(result);
+
+        res.json({
+            message: "Livro salvo com sucesso no DB!",
+            book_id: result._id,
+        })
     }).catch(error => {
         console.log(error);
     })
 
-    res.json({
-        message: "Livro salvo com sucesso no DB!"
-    })
+
 }
